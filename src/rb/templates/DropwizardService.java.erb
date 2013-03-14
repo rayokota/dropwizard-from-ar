@@ -1,0 +1,58 @@
+package com.yammer.<%= service_name %>.service;
+
+import com.google.common.base.Optional;
+import com.yammer.dropwizard.assets.AssetsBundle;
+import com.yammer.dropwizard.config.Bootstrap;
+import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.db.DatabaseConfiguration;
+import com.yammer.dropwizard.hibernate.HibernateBundle;
+import com.yammer.dropwizard.views.ViewBundle;
+import com.yammer.dropwizard.Service;
+import com.yammer.<%= service_name %>.service.dao.*;
+import com.yammer.<%= service_name %>.service.model.*;
+import com.yammer.<%= service_name %>.service.resources.*;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class <%= service_name.cap_first %>Service extends Service<<%= service_name.cap_first %>Configuration> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(<% service_name.cap_first %>Service.class);
+
+    public static void main(String[] args) throws Exception {
+        new <%= service_name.cap_first %>Service().run(args);
+    }
+
+    private final HibernateBundle<<%= service_name.cap_first %>Configuration> hibernateBundle = new HibernateBundle<<%= service_name.cap_first %>Configuration>(
+    <% model_defns.each_with_index do |model_defn, i| %>
+            <%= model_defn.model_name %>.class<% if i < model_defns.size - 1 %>,
+      <% end %>
+    <% end %>
+        ) {
+        @Override
+        public DatabaseConfiguration getDatabaseConfiguration(<%= service_name.cap_first %>Configuration configuration) {
+            return configuration.getDatabaseConfiguration();
+        }
+    };
+
+    @Override
+    public void initialize(Bootstrap<<%= service_name.cap_first %>Configuration> bootstrap) {
+        bootstrap.addBundle(new AssetsBundle());
+        bootstrap.addBundle(new ViewBundle());
+        bootstrap.addBundle(hibernateBundle);
+    }
+
+    @Override
+    public void run(<%= service_name.cap_first %>Configuration configuration,
+        Environment environment) throws Exception {
+        final SessionFactory sessionFactory = hibernateBundle.getSessionFactory();
+        //environment.addHealthCheck(new ExampleHealthCheck());
+        //environment.addResource(new ExampleResource(config.getSampleProperty()));
+        <% model_defns.each_with_index do |model_defn, i| %>
+        environment.addResource(new <%= model_defn.model_name %>Resource(new <%= model_defn.model_name %>DAO(sessionFactory)));
+        <% end %>
+    }
+}

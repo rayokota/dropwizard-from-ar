@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.version       = "1.0.0"
 
   gem.add_runtime_dependency "activesupport"
+  gem.add_runtime_dependency "artii"
+  gem.add_runtime_dependency "linguistics"
+  gem.add_runtime_dependency "orderedhash"
 end

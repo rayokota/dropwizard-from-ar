@@ -13,9 +13,10 @@
 # limitations under the License.
 
 class ProjectDefn
-  attr_reader :databases_namespace, :databases
+  attr_reader :service_name, :databases_namespace, :databases
 
   def initialize(map)
+    @service_name = map["service_name"]
     @databases_namespace = map["databases_namespace"]
     @databases = []
     map["databases"].each do |database|

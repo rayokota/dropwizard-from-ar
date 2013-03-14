@@ -1,0 +1,21 @@
+package com.yammer.<%= service_name %>.client;
+
+import com.sun.jersey.api.client.Client;
+
+import java.net.URI;
+
+public class <%= service_name.cap_first %>Client {
+
+    private final Client client;
+    private final URI root;
+
+    public <%= service_name.cap_first %>Client(Client client, URI root) {
+        this.client = client;
+        this.root = root;
+    }
+
+    public String getExample() {
+        return client.resource(root).path("/v1/example/yo").queryParam("bar", "dude").get(String.class);
+    }
+
+}

@@ -1,0 +1,29 @@
+package com.yammer.<%= service_name %>.service.views;
+
+import com.yammer.dropwizard.views.View;
+import com.yammer.<%= service_name %>.service.model.<%= model.cap_first %>;
+
+public class <%= model.cap_first %>ShowView extends View {
+    private final <%= model.cap_first %> <%= model %>;
+    private final String notice;
+
+    public <%= model.cap_first %>ShowView(<%= model.cap_first %> <%= model %>) {
+        super("<%= model_plural %>/show.ftl");
+        this.<%= model %> = <%= model %>;
+        this.notice = "";
+    }
+
+    public <%= model.cap_first %>ShowView(<%= model.cap_first %> <%= model %>, String notice) {
+        super("<%= model_plural %>/show.ftl");
+        this.<%= model %> = <%= model %>;
+        this.notice = notice;
+    }
+
+    public <%= model.cap_first %> get<%= model.cap_first %>() {
+        return <%= model %>;
+    }
+
+    public String getNotice() {
+        return notice;
+    }
+}

@@ -19,7 +19,7 @@ class AssociationDefn
     @name = line.split(" ")[1]
 
     @type = type
-    @name = name.gsub(":", "").gsub(",", "")
+    @name = name.gsub(":", "").gsub(",", "").gsub("#", "")
 
     changed_class_name = line.match(/^.*:class_name => ['"]([^'"]*)['"].*$/)
 
@@ -72,11 +72,11 @@ class AssociationDefn
   def assoc_impl
     case @type
       when "belongs_to"
-        "BelongsToAssociation"
+        "@ManyToOne @JoinColumn(name = \"#{@foreign_key}\")"
       when "has_many"
-        "HasManyAssociation"
+        inverse_assoc ? "@OneToMany(mappedBy = \"#{inverse_assoc.name}\")" : "@OneToMany"
       when "has_one"
-        "HasOneAssociation"
+        inverse_assoc ? "@OneToOne(mappedBy = \"#{inverse_assoc.name}\")" : "@OneToMany"
     end
   end
   
@@ -98,7 +98,7 @@ class AssociationDefn
   end
 
   def java_type
-    "#{assoc_impl}<#{assoc_model.model_name}>"
+    "Set<#{assoc_model.model_name}>"
   end
 
   def find_model(model_defns_by_namespace_table_names)
@@ -115,7 +115,7 @@ class AssociationDefn
   end
   
   def field_name
-    "__assoc_#{@name}"
+    "#{@name}"
   end
   
   def assoc_getter
@@ -129,5 +129,26 @@ class AssociationDefn
       else
         @assoc_model.model_name
     end
+  end
+
+  def inverse_assoc
+    @assoc_model.associations.each do |assoc_defn|
+      return assoc_defn if assoc_defn.foreign_key == @foreign_key
+    end
+    nil
+  end
+
+  def ==(other)
+    return false unless other.instance_of?(self.class)
+    @name == other.name
+  end
+
+  def eql?(other)
+    return false unless other.instance_of?(self.class)
+    @name.eql?(other.name)
+  end
+
+  def hash
+    @name.hash
   end
 end

@@ -1,0 +1,23 @@
+package com.yammer.<%= service_name %>.service.dao;
+
+import com.yammer.dropwizard.hibernate.AbstractDAO;
+import com.yammer.<%= service_name %>.service.model.*;
+
+import java.util.List;
+//import org.joda.time.LocalDate;
+import org.hibernate.SessionFactory;
+
+public class <%= model.cap_first %>DAO extends AbstractDAO<<%= model.cap_first %>> {
+    public <%= model.cap_first %>DAO(SessionFactory provider) {
+        super(provider);
+    }
+
+    public List<<%= model.cap_first %>> findAll() {
+        return criteria().list();
+    }
+
+    public <%= model.cap_first %> find(long id) {
+        return get(id);
+    }
+}
+

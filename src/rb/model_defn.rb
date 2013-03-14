@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'set'
+
 class ModelDefn
   attr_accessor :namespace, :database_defn
   attr_reader :fields, :table_name, :model_name, :migration_number
@@ -19,7 +21,7 @@ class ModelDefn
 
   def initialize(decl_line, migration_number)
     @fields = []
-    @associations = []
+    @associations = Set.new
     @migration_number = migration_number
 
     @table_name = decl_line.match(/^\s*create_table "([^")]*)".*$/)[1]
