@@ -1,5 +1,8 @@
 package com.yammer.<%= service_name %>.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.BatchSize;
 
@@ -9,28 +12,63 @@ import java.util.Set;
 
 @Entity
 @Table(name = "<%= model_defn.table_name %>")
+@JsonIgnoreProperties({
+<% model_defn.associations.each_with_index do |assoc, i| %>
+    <% if assoc.inverse_assoc? %>
+        "<%= assoc.field_name.camelcase.down_first %>"<%if i < model_defn.associations.size - 1 %>,<% end %>
+    <% end %>
+<% end %>
+})
 public class <%=  model_defn.model_name %> {
     @Id
     @GeneratedValue
     private long id;
 
     // Fields
-    <% model_defn.fields.each do |field_defn| %>
+<% model_defn.fields.each do |field_defn| %>
     <% unless model_defn.foreign_key?(field_defn.name) %>
+
     @Column(name = "<%= field_defn.name %>")
     private <%= field_defn.java_type %> _<%= field_defn.name %>;
     <% end %>
-    <% end %>
+<% end %>
 
     // Associations
-    <% model_defn.associations.each do |assoc| %>
+<% model_defn.associations.each do |assoc| %>
     <% if assoc.inverse_assoc? %>
+
     <%= assoc.assoc_impl %>
+
     private <%= assoc.assoc_getter_type %> _<%= assoc.field_name %>;
     <% end %>
-    <% end %>
-}
+<% end %>
 
+    public long getId() {
+        return id;
+    }
+
+<% model_defn.fields.each do |field_defn| %>
+    <% unless model_defn.foreign_key?(field_defn.name) %>
+
+    public <%= field_defn.java_type %> <%= field_defn.getter %> {
+        return _<%= field_defn.name %>;
+    }
+
+    public void set<%= field_defn.name.camelcase %>(<%= field_defn.java_type %> newval) {
+        this._<%= field_defn.name %> = newval;
+    }
+    <% end %>
+<% end %>
+
+<% model_defn.associations.each do |a| %>
+    <% if a.inverse_assoc? %>
+
+    public <%= a.assoc_getter_type %> <%= a.assoc_getter %>() {
+        return _<%= a.field_name %>;
+    }
+    <% end %>
+<% end %>
+}
 
 
 /*
