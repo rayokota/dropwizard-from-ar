@@ -16,14 +16,18 @@ public class <%=  model_defn.model_name %> {
 
     // Fields
     <% model_defn.fields.each do |field_defn| %>
+    <% unless model_defn.foreign_key?(field_defn.name) %>
     @Column(name = "<%= field_defn.name %>")
-    private <%=  field_defn.java_type %> _<%= field_defn.name %>;
+    private <%= field_defn.java_type %> _<%= field_defn.name %>;
+    <% end %>
     <% end %>
 
     // Associations
     <% model_defn.associations.each do |assoc| %>
+    <% if assoc.inverse_assoc? %>
     <%= assoc.assoc_impl %>
-    private <%= assoc.java_type %> _<%= assoc.field_name %>;
+    private <%= assoc.assoc_getter_type %> _<%= assoc.field_name %>;
+    <% end %>
     <% end %>
 }
 

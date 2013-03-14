@@ -64,4 +64,8 @@ class ModelDefn
     raise unless model_name && model_name != ""
     raise unless database_defn
   end
+
+  def foreign_key?(name)
+    associations.any? {|assoc| assoc.foreign_key == name}
+  end
 end

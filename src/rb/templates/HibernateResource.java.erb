@@ -44,12 +44,14 @@ public class <%= model.cap_first %>Resource {
 
     @Produces(MediaType.TEXT_HTML)
     @GET
+    @UnitOfWork
     public <%= model.cap_first %>IndexView list<%= model_plural.cap_first %>() {
         return new <%= model.cap_first %>IndexView(get<%= model_plural.cap_first %>());
     }
 
     @Produces(MediaType.TEXT_HTML)
     @GET @Path("/{<%= model %>Id}")
+    @UnitOfWork
     public <%= model.cap_first %>ShowView show<%= model.cap_first %>(@PathParam("id") long id) {
         return new <%= model.cap_first %>ShowView(get<%= model.cap_first %>(id));
     }

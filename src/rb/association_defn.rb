@@ -72,14 +72,25 @@ class AssociationDefn
   def assoc_impl
     case @type
       when "belongs_to"
-        "@ManyToOne @JoinColumn(name = \"#{@foreign_key}\")"
+        "@ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = \"#{@foreign_key}\")"
       when "has_many"
-        inverse_assoc ? "@OneToMany(mappedBy = \"#{inverse_assoc.name}\")" : "@OneToMany"
+        inverse_assoc ? "@OneToMany(fetch = FetchType.LAZY, mappedBy = \"_#{inverse_assoc.name}\")" : "@OneToMany"
       when "has_one"
-        inverse_assoc ? "@OneToOne(mappedBy = \"#{inverse_assoc.name}\")" : "@OneToMany"
+        inverse_assoc ? "@OneToOne(fetch = FetchType.LAZY, mappedBy = \"_#{inverse_assoc.name}\")" : "@OneToOne"
     end
   end
-  
+
+  def inverse_assoc?
+    case @type
+      when "belongs_to"
+        true
+      when "has_many"
+        inverse_assoc
+      when "has_one"
+        inverse_assoc
+    end
+  end
+
   def constructor_call
     case @type
       when "belongs_to"

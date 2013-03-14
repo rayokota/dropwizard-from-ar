@@ -26,11 +26,11 @@ class FieldDefn
 
     @default_value = args[":default"]
     
-    if !@default_value.nil?
-      if data_type == :datetime || data_type == :date || data_type == :timestamp
-        @default_value = Time.parse(@default_value).to_i * 1000
-      end
-    end
+    #if !@default_value.nil?
+    #  if data_type == :datetime || data_type == :date
+    #    @default_value = Time.parse(@default_value).to_i * 1000
+    #  end
+    #end
 
   end
 
@@ -46,10 +46,10 @@ class FieldDefn
     true => {
       :integer=>'Integer', 
       :string=>'String', 
-      :datetime=>'Long',
-      :timestamp=>'Long',
+      :datetime=>'java.sql.Timestamp',
+      :timestamp=>'java.sql.Timestamp',
       :varbinary=>'byte[]',
-      :date=>'Long', 
+      :date=>'java.sql.Date',
       :text=>'String', 
       :binary=>'byte[]', 
       :float=>'Double', 
@@ -61,10 +61,10 @@ class FieldDefn
     false => {
       :integer=>'int', 
       :string=>'String', 
-      :datetime=>'long',
-      :timestamp=>'long',
+      :datetime=>'java.sql.Timestamp',
+      :timestamp=>'java.sql.Timestamp',
       :varbinary=>'byte[]',
-      :date=>'long', 
+      :date=>'java.sql.Date',
       :text=>'String', 
       :binary=>'byte[]', 
       :float=>'double', 
@@ -79,10 +79,10 @@ class FieldDefn
     mappings = {
       :integer=>'Integer', 
       :string=>'String', 
-      :datetime=>'Long',
-      :timestamp=>'Long',
+      :datetime=>'java.sql.Timestamp',
+      :timestamp=>'java.sql.Timestamp',
       :varbinary=>'byte[]',
-      :date=>'Long', 
+      :date=>'java.sql.Date',
       :text=>'String', 
       :binary=>'byte[]', 
       :float=>'Double', 
@@ -103,7 +103,7 @@ class FieldDefn
     mappings = {
       :integer=>'INTEGER', 
       :string=>'CHAR', 
-      :datetime=>'DATE',
+      :datetime=>'TIMESTAMP',
       :timestamp=>'TIMESTAMP',
       :varbinary=>'VARBINARY',
       :date=>'DATE', 
@@ -148,16 +148,15 @@ class FieldDefn
   end
   
   def prep_stmt_modifier(x)
-    case data_type
-      when :datetime
-        "new Timestamp(#{x})"
-      when :timestamp
-        "new Timestamp(#{x})"
-      when :date
-        "new Date(#{x})"
-      else
-        x
-    end
+    #case data_type
+    #  when :datetime
+    #    "new Timestamp(#{x})"
+    #  when :date
+    #    "new Date(#{x})"
+    #  else
+    #    x
+    #end
+    x
   end
 
 
@@ -170,9 +169,9 @@ class FieldDefn
   end
   
   def post_modifier
-    if data_type == :datetime || data_type == :timestamp
-      ".getTime()"
-    end
+    #if data_type == :datetime
+    #  ".getTime()"
+    #end
   end
   
   def get_from_rs
@@ -181,12 +180,10 @@ class FieldDefn
         is_long? ? "getLongOrNull(rs, \"#{name}\")" : "getIntOrNull(rs, \"#{name}\")"
       when :bigint
         "getLongOrNull(rs, \"#{name}\")"
-      when :datetime 
-        "getDateAsLong(rs, \"#{name}\")"
-      when :timestamp
-        "getDateAsLong(rs, \"#{name}\")"
-      when :date
-        "getDateAsLong(rs, \"#{name}\")"
+      #when :datetime
+      #  "getDateAsLong(rs, \"#{name}\")"
+      #when :date
+      #  "getDateAsLong(rs, \"#{name}\")"
       when :float
         "getDoubleOrNull(rs, \"#{name}\")"
       when :boolean
