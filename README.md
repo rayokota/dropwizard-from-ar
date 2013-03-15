@@ -23,8 +23,7 @@ The project definition file is a YAML file that tells the generator where to fin
         schema_rb: database_2/db/schema.rb
         models: database_2/app/models
 
-Running the Generator
-====
+### Running the Generator ###
 
 Running the generator:
 
