@@ -19,7 +19,7 @@ class TemplateProcessor
 
     all_model_defns = []
     project_defn.databases.each do |database_defn|
-      by_table_name = model_defns_by_namespace_table_names[database_defn.namespace]
+      by_table_name = model_defns_by_namespace_table_names[database_defn.name]
       model_defns = by_table_name.values.sort_by{|x| x.table_name}
       all_model_defns += model_defns
       process_database_defn(project_defn, database_defn, output_dir, model_defns, by_table_name)

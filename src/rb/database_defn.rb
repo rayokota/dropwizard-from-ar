@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 class DatabaseDefn
-  attr_reader :namespace, :name, :schema_rb, :models_dir
+  attr_reader :name, :schema_rb, :models_dir
 
   def initialize(map)
-    @namespace = map["root_namespace"]
     @name = map["db_name"]
     @schema_rb = map["schema_rb"]
     @models_dir = map["models"]

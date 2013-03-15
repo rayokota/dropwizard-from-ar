@@ -14,7 +14,7 @@
 
 require File.expand_path(File.dirname(__FILE__)) + "/requires.rb"
 
-class Jack
+class DropwizardFromAR
   def self.run(argv)
     project_yml = argv[0]
     output_dir = argv[1]
@@ -27,19 +27,19 @@ class Jack
 
     # initial pass to establish all the tables
     project_defn.databases.each do |database_defn|
-      model_defns_by_namespace_table_names[database_defn.namespace] = by_table_name = {}
+      model_defns_by_namespace_table_names[database_defn.name] = by_table_name = {}
 
       model_defns, migration_number = SchemaRbParser.parse(base_dir + "/" + database_defn.schema_rb)
       model_defns.each do |model_defn|
         model_defn.database_defn = database_defn
-        model_defn.namespace = database_defn.namespace
+        model_defn.namespace = database_defn.name
         by_table_name[model_defn.table_name] = model_defn
       end
     end
 
     # second pass to accumulate all the associations
     project_defn.databases.each do |database|
-      by_table_name = model_defns_by_namespace_table_names[database.namespace]
+      by_table_name = model_defns_by_namespace_table_names[database.name]
 
       ModelsDirProcessor.process(base_dir, database, by_table_name)
 
@@ -59,12 +59,12 @@ end
 
 if $0 == __FILE__
   if ARGV.size == 2
-    Jack.run(ARGV)
+    DropWizardFromAR.run(ARGV)
   else
     puts <<-END
 Wrong number of arguments.
 Usage: 
-  ruby src/rb/jack.rb <path to project.yml> <path where output should be generated>
+  ruby src/rb/dropwizard_from_ar.rb <path to project.yml> <path where output should be generated>
     END
   end
 end

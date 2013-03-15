@@ -55,10 +55,6 @@ class ModelDefn
     "#{x}()"
   end
   
-  def import
-    "import #{namespace}.models.#{model_name};"
-  end
-  
   def validate
     raise unless table_name && table_name != ""
     raise unless model_name && model_name != ""

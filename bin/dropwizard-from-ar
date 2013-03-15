@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require File.expand_path(File.dirname(__FILE__) + '/../src/rb/dropwizard_from_ar')
+
+if ARGV.size == 2
+  DropwizardFromAR.run(ARGV)
+else
+  puts <<-END
+Wrong number of arguments.
+Usage: 
+ruby src/rb/dropwizard_from_ar.rb <path to project.yml> <path where output should be generated>
+  END
+end
