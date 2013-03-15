@@ -22,37 +22,18 @@ class TemplateProcessor
       by_table_name = model_defns_by_namespace_table_names[database_defn.namespace]
       model_defns = by_table_name.values.sort_by{|x| x.table_name}
       all_model_defns += model_defns
-
       process_database_defn(project_defn, database_defn, output_dir, model_defns, by_table_name)
     end
 
     generate_all(project_defn, all_model_defns.sort_by{|x| x.table_name}, output_dir)
-
     puts "Found #{all_model_defns.size} models"
   end
   
   def self.process_database_defn(project_defn, database_defn, output_dir, model_defns, by_table_name)
-=begin
-    output_dir = output_dir.dup + "/" + database_defn.namespace.gsub(".", "/")
-
-    db_name = database_defn.name
-    root_package = database_defn.namespace
-=end
-
     model_defns.each do |model_defn|
       generate_model(model_defn, project_defn, output_dir)
     end
   end
-
-=begin
-  def self.render_create_method(model_defn, signature, only_not_null = false)
-    CREATE_METHOD_TEMPLATE.result(binding)
-  end
-
-  def self.render_mock_create_method(model_defn, signature, only_not_null = false)
-    MOCK_CREATE_METHOD_TEMPLATE.result(binding)
-  end
-=end
 
   def self.mkdirs(project_defn, output_dir)
     service_name = project_defn.service_name
@@ -108,10 +89,6 @@ class TemplateProcessor
     model = model_defn.model_name.down_first
     model_plural = model.pluralize
     attrs = model_defn.attrs
-
-    create_signature_full = model_defn.fields.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
-    create_signature_small = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
-    create_signature_small = create_signature_full == create_signature_small || create_signature_small.empty? ? nil : create_signature_small
 
     FileUtils.mkdir_p "#{output_dir}/#{service_name}/#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/#{model_plural}"
 
