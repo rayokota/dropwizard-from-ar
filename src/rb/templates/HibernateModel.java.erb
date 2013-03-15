@@ -26,7 +26,7 @@ public class <%=  model_defn.model_name %> {
 
     // Fields
 <% model_defn.fields.each do |field_defn| %>
-    <% unless model_defn.foreign_key?(field_defn.name) %>
+    <% unless model_defn.foreign_key?(field_defn) %>
 
     @Column(name = "<%= field_defn.name %>")
     private <%= field_defn.java_type %> _<%= field_defn.name %>;
@@ -48,7 +48,7 @@ public class <%=  model_defn.model_name %> {
     }
 
 <% model_defn.fields.each do |field_defn| %>
-    <% unless model_defn.foreign_key?(field_defn.name) %>
+    <% unless model_defn.foreign_key?(field_defn) %>
 
     public <%= field_defn.java_type %> <%= field_defn.getter %> {
         return _<%= field_defn.name %>;

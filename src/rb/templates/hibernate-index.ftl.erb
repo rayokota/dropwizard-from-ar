@@ -1,0 +1,31 @@
+<#-- @ftlvariable name="" type="com.yammer.<%= service_name %>.service.views.<%= model.cap_first %>IndexView" -->
+<#setting number_format="computer">
+<#include "../header.ftl"/>
+<div class="page-header">
+<h1>Listing <%= model_plural.cap_first %></h1>
+</div>
+
+<table class="table table-condensed table-striped">
+  <tr>
+    <th>ID</th>
+    <% attrs.each_key do |k| %>
+    <th><%= k.cap_first %></th>
+    <% end %>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+  <#list <%= model_plural %> as <%= model %>>
+  <tr>
+  <td>${<%= model %>.id}</td>
+  <% attrs.each_pair do |k, v| %>
+  <td>${(<%= model %>.<%= k %>!"&nbsp;")<%= if v == "boolean" then "?string(\"true\", \"false\")" else "" end %>}</td>
+  <% end %>
+  <td><a href="/<%= model_plural %>/${<%= model %>.id?string}" class="btn btn-small">Show</a></td>
+  </tr>
+</#list>
+</table>
+
+<a href="/" class="btn">Back</a>
+<#include "../footer.ftl"/>

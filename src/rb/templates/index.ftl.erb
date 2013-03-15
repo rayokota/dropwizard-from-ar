@@ -1,0 +1,19 @@
+<#-- @ftlvariable name="" type="com.yammer.<%= service_name %>.service.views.IndexView" -->
+<#setting number_format="computer">
+<#include "header.ftl"/>
+<div class="page-header">
+<h1>Listing All Models</h1>
+</div>
+
+<table class="table table-condensed table-striped">
+  <% model_defns.each do |model_defn| %>
+      <tr>
+        <td>
+        <%= model_defn.model_name.camelcase.pluralize %>
+        </td>
+        <td><a href="/<%= model_defn.model_name.down_first.pluralize %>" class="btn btn-small">Show</a></td>
+      </tr>
+  <% end %>
+</table>
+
+<#include "footer.ftl"/>

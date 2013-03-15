@@ -65,7 +65,15 @@ class ModelDefn
     raise unless database_defn
   end
 
-  def foreign_key?(name)
-    associations.any? {|assoc| assoc.foreign_key == name}
+  def attrs
+    x = {}
+    fields.each do |field|
+      x[field.name.camelcase.down_first] = field.java_type unless foreign_key?(field)
+    end
+    x
+  end
+
+  def foreign_key?(field)
+    associations.any? {|assoc| assoc.foreign_key == field.name}
   end
 end

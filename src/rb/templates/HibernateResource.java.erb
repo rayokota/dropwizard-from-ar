@@ -36,7 +36,7 @@ public class <%= model.cap_first %>Resource {
     }
 
     @Produces(MediaType.APPLICATION_JSON)
-    @GET @Path("/{<%= model %>Id}")
+    @GET @Path("/{id}")
     @UnitOfWork
     public <%= model.cap_first %> get<%= model.cap_first %>(@PathParam("id") long id) {
         return dao.find(id);
@@ -50,7 +50,7 @@ public class <%= model.cap_first %>Resource {
     }
 
     @Produces(MediaType.TEXT_HTML)
-    @GET @Path("/{<%= model %>Id}")
+    @GET @Path("/{id}")
     @UnitOfWork
     public <%= model.cap_first %>ShowView show<%= model.cap_first %>(@PathParam("id") long id) {
         return new <%= model.cap_first %>ShowView(get<%= model.cap_first %>(id));

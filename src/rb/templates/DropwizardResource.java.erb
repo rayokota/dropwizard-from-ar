@@ -1,0 +1,33 @@
+package com.yammer.<%= service_name %>.service.resources;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+import com.yammer.dropwizard.hibernate.UnitOfWork;
+import com.yammer.dropwizard.views.View;
+import com.yammer.<%= service_name %>.service.views.*;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+
+@Path("/")
+public class <%= service_name.cap_first %>Resource {
+
+    @Context
+    private UriInfo info;
+
+    public <%= service_name.cap_first %>Resource() {
+    }
+
+    @Produces(MediaType.TEXT_HTML)
+    @GET
+    @UnitOfWork
+    public IndexView list() {
+        return new IndexView();
+    }
+}

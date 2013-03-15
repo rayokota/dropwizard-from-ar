@@ -27,6 +27,8 @@ class TemplateProcessor
     end
 
     generate_all(project_defn, all_model_defns.sort_by{|x| x.table_name}, output_dir)
+
+    puts "Found #{all_model_defns.size} models"
   end
   
   def self.process_database_defn(project_defn, database_defn, output_dir, model_defns, by_table_name)
@@ -82,8 +84,21 @@ class TemplateProcessor
         "service-pom.xml.erb"              => "#{service_name}-service/pom.xml",
         "dropwizard.yml.erb"               => "#{service_name}-service/#{service_name}.yml",
         "DropwizardConfiguration.java.erb" => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/#{service_name.cap_first}Configuration.java",
+        "DropwizardResource.java.erb"      => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/resources/#{service_name.cap_first}Resource.java",
         "DropwizardService.java.erb"       => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/#{service_name.cap_first}Service.java",
         "banner.txt.erb"                   => "#{service_name}-service/src/main/resources/banner.txt",
+
+        "IndexView.java.erb"               => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/views/IndexView.java",
+        "index.ftl.erb"                    => "#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/index.ftl",
+        "bootstrap.min.css"                => "#{service_name}-service/src/main/resources/assets/css/bootstrap.min.css",
+        "datepicker.css"                   => "#{service_name}-service/src/main/resources/assets/css/datepicker.css",
+        "glyphicons-halflings.png"         => "#{service_name}-service/src/main/resources/assets/img/glyphicons-halflings.png",
+        "glyphicons-halflings-white.png"   => "#{service_name}-service/src/main/resources/assets/img/glyphicons-halflings-white.png",
+        "bootstrap.min.js"                 => "#{service_name}-service/src/main/resources/assets/js/bootstrap.min.js",
+        "bootstrap-datepicker.js"          => "#{service_name}-service/src/main/resources/assets/js/bootstrap-datepicker.js",
+        "jquery-1.7.2.min.js"              => "#{service_name}-service/src/main/resources/assets/js/jquery-1.7.2.min.js",
+        "header.ftl.erb"                   => "#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/header.ftl",
+        "footer.ftl.erb"                   => "#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/footer.ftl",
     }
     files.each { |key, value| generate(nil, project_defn, output_dir, binding, key, value) }
   end
@@ -92,10 +107,13 @@ class TemplateProcessor
     service_name = project_defn.service_name
     model = model_defn.model_name.down_first
     model_plural = model.pluralize
+    attrs = model_defn.attrs
 
     create_signature_full = model_defn.fields.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
     create_signature_small = model_defn.fields.reject{|field_defn| field_defn.nullable? }.map{|field_defn| ["final", field_defn.java_type, field_defn.name].join(" ")}.join(", ")
     create_signature_small = create_signature_full == create_signature_small || create_signature_small.empty? ? nil : create_signature_small
+
+    FileUtils.mkdir_p "#{output_dir}/#{service_name}/#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/#{model_plural}"
 
     files = {
         "HibernateDAO.java.erb"       => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/dao/#{model_defn.model_name.cap_first}DAO.java",
@@ -103,6 +121,8 @@ class TemplateProcessor
         "HibernateModel.java.erb"     => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/model/#{model_defn.model_name.cap_first}.java",
         "HibernateResource.java.erb"  => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/resources/#{model_defn.model_name.cap_first}Resource.java",
         "HibernateShowView.java.erb"  => "#{service_name}-service/src/main/java/com/yammer/#{service_name}/service/views/#{model_defn.model_name.cap_first}ShowView.java",
+        "hibernate-index.ftl.erb"     => "#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/#{model_plural}/index.ftl",
+        "hibernate-show.ftl.erb"      => "#{service_name}-service/src/main/resources/com/yammer/#{service_name}/service/views/#{model_plural}/show.ftl",
     }
     files.each { |key, value| generate(model_defn, project_defn, output_dir, binding, key, value) }
   end

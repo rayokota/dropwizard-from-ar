@@ -50,7 +50,7 @@ public class <%= service_name.cap_first %>Service extends Service<<%= service_na
         Environment environment) throws Exception {
         final SessionFactory sessionFactory = hibernateBundle.getSessionFactory();
         //environment.addHealthCheck(new ExampleHealthCheck());
-        //environment.addResource(new ExampleResource(config.getSampleProperty()));
+        environment.addResource(new <%= service_name.cap_first %>Resource());
         <% model_defns.each_with_index do |model_defn, i| %>
         environment.addResource(new <%= model_defn.model_name %>Resource(new <%= model_defn.model_name %>DAO(sessionFactory)));
         <% end %>
